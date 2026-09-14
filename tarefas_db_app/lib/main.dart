@@ -1,317 +1,573 @@
 import 'package:flutter/material.dart';
+
 import 'database/database_helper.dart';
 import 'models/tarefa.dart';
 
-void main() {
-  runApp(const TarefasDbApp());
+
+
+void main(){
+
+  runApp(
+    const MyApp()
+  );
+
 }
 
-class TarefasDbApp extends StatelessWidget {
-  const TarefasDbApp({super.key});
+
+
+
+class MyApp extends StatelessWidget{
+
+
+  const MyApp({super.key});
+
+
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+
+
     return MaterialApp(
-      title: 'Tarefas SQLite',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        useMaterial3: true,
-      ),
-      home: const TarefasScreen(),
+
+      debugShowCheckedModeBanner:false,
+
+
+      home: const TelaTarefas(),
+
+
     );
+
+
   }
+
+
 }
 
-class TarefasScreen extends StatefulWidget {
-  const TarefasScreen({super.key});
+
+
+
+
+
+
+class TelaTarefas extends StatefulWidget{
+
+
+  const TelaTarefas({super.key});
+
+
 
   @override
-  State<TarefasScreen> createState() => _TarefasScreenState();
+  State<TelaTarefas> createState()=>_TelaTarefasState();
+
+
+
 }
 
-class _TarefasScreenState extends State<TarefasScreen> {
-  List<Tarefa> _tarefas = [];
 
-  bool _carregando = true;
 
-  final TextEditingController _buscaController =
-      TextEditingController();
+
+
+class _TelaTarefasState extends State<TelaTarefas>{
+
+
+
+  final campo = TextEditingController();
+
+
+
+  List<Tarefa> tarefas = [];
+
+
+
+
 
   @override
-  void initState() {
+  void initState(){
+
+
     super.initState();
-    _atualizarLista();
+
+
+    carregar();
+
+
   }
 
-  @override
-  void dispose() {
-    _buscaController.dispose();
-    super.dispose();
-  }
 
-  // Carregar todas as tarefas
-  Future<void> _atualizarLista() async {
-    setState(() => _carregando = true);
 
-    final dados =
-        await DatabaseHelper.instance.queryAll();
 
-    setState(() {
-      _tarefas = dados;
-      _carregando = false;
+
+
+  Future<void> carregar() async {
+
+
+    final lista =
+    await DatabaseHelper.instance.buscarTodas();
+
+
+
+    setState((){
+
+
+      tarefas = lista;
+
+
     });
+
+
   }
 
-  // EXERCÍCIO 03 - Buscar tarefas
-  Future<void> _buscarTarefas(String texto) async {
-    if (texto.trim().isEmpty) {
-      _atualizarLista();
+
+
+
+
+
+  Future<void> adicionar() async {
+
+
+    if(campo.text.isEmpty){
+
       return;
+
     }
 
-    setState(() => _carregando = true);
 
-    final dados =
-        await DatabaseHelper.instance.search(texto.trim());
 
-    setState(() {
-      _tarefas = dados;
-      _carregando = false;
-    });
-  }
+    await DatabaseHelper.instance.inserir(
 
-  // Adicionar tarefa
-  Future<void> _adicionarTarefa(String titulo) async {
-    if (titulo.trim().isEmpty) return;
+      Tarefa(
 
-    await DatabaseHelper.instance.insert(
-      Tarefa(titulo: titulo.trim()),
-    );
+        titulo:campo.text,
 
-    _atualizarLista();
-  }
-
-  // Alterar status
-  Future<void> _alternarStatus(Tarefa tarefa) async {
-    final atualizada =
-        tarefa.copyWith(concluida: !tarefa.concluida);
-
-    await DatabaseHelper.instance.update(atualizada);
-
-    _atualizarLista();
-  }
-
-  // Remover uma tarefa
-  Future<void> _removerTarefa(int id) async {
-    await DatabaseHelper.instance.delete(id);
-
-    _atualizarLista();
-  }
-
-  // EXERCÍCIO 02 - Remover todas as tarefas
-  Future<void> _limparTodasTarefas() async {
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Limpar tarefas'),
-        content: const Text(
-          'Deseja realmente apagar todas as tarefas?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx, false);
-            },
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx, true);
-            },
-            child: const Text('Apagar tudo'),
-          ),
-        ],
       ),
+
     );
 
-    if (confirmar == true) {
-      await DatabaseHelper.instance.deleteAll();
 
-      _buscaController.clear();
 
-      _atualizarLista();
+    campo.clear();
+
+
+
+    carregar();
+
+
+
+  }
+
+
+
+
+
+
+
+  Future<void> excluirTudo() async {
+
+
+
+    final resposta = await showDialog<bool>(
+
+
+      context:context,
+
+
+      builder:(context){
+
+
+        return AlertDialog(
+
+
+          title:
+          const Text(
+            "Apagar tudo?"
+          ),
+
+
+
+          actions:[
+
+
+            TextButton(
+
+              onPressed:(){
+
+                Navigator.pop(
+                  context,
+                  false
+                );
+
+              },
+
+
+              child:
+              const Text(
+                "Cancelar"
+              ),
+
+
+            ),
+
+
+
+            TextButton(
+
+              onPressed:(){
+
+                Navigator.pop(
+                  context,
+                  true
+                );
+
+              },
+
+
+              child:
+              const Text(
+                "Apagar"
+              ),
+
+
+            )
+
+
+          ],
+
+
+        );
+
+
+      },
+
+
+    );
+
+
+
+    if(resposta == true){
+
+
+      await DatabaseHelper.instance.apagarTudo();
+
+
+      carregar();
+
+
     }
+
+
+
   }
 
-  // Dialog para adicionar tarefa
-  void _exibirDialogCadastro() {
-    final controller = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Nova Tarefa (SQLite)'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Descrição da tarefa',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _adicionarTarefa(controller.text);
-              Navigator.pop(ctx);
-            },
-            child: const Text('Salvar'),
-          ),
-        ],
+
+
+
+
+  Future<void> mudarStatus(Tarefa tarefa) async {
+
+
+    await DatabaseHelper.instance.atualizar(
+
+      Tarefa(
+
+        id:tarefa.id,
+
+
+        titulo:tarefa.titulo,
+
+
+        concluida:
+        !tarefa.concluida,
+
+
       ),
+
+
     );
+
+
+    carregar();
+
+
   }
+
+
+
+
+
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+
+
+
     return Scaffold(
+
+
       appBar: AppBar(
-        title: const Text(
-          'Persistência Relacional (SQLite)',
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
 
-        // EXERCÍCIO 02
-        actions: [
+
+        title:
+        const Text(
+          "Tarefas SQLite"
+        ),
+
+
+
+        actions:[
+
+
           IconButton(
-            icon: const Icon(Icons.delete_sweep),
-            tooltip: 'Limpar todas as tarefas',
-            onPressed: _tarefas.isEmpty
-                ? null
-                : _limparTodasTarefas,
-          ),
+
+            icon:
+            const Icon(
+              Icons.delete
+            ),
+
+
+            onPressed:
+            excluirTudo,
+
+
+          )
+
+
         ],
+
+
       ),
 
-      body: Column(
-        children: [
 
-          // EXERCÍCIO 03 - Campo de busca
+
+
+
+      body:Column(
+
+
+        children:[
+
+
+
           Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: _buscaController,
-              decoration: InputDecoration(
-                labelText: 'Buscar tarefa',
-                hintText: 'Digite o nome da tarefa',
-                prefixIcon: const Icon(Icons.search),
 
-                suffixIcon: _buscaController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _buscaController.clear();
-                          _atualizarLista();
-                        },
-                      )
-                    : null,
 
-                border: const OutlineInputBorder(),
+            padding:
+            const EdgeInsets.all(10),
+
+
+
+            child:
+            Text(
+
+              "Total de tarefas: ${tarefas.length}",
+
+
+              style:
+              const TextStyle(
+
+                fontSize:20,
+
               ),
 
-              onChanged: _buscarTarefas,
+
             ),
+
+
+
           ),
 
-          // Lista de tarefas
+
+
+
+
+
+          Row(
+
+
+            children:[
+
+
+
+              Expanded(
+
+
+                child:
+                TextField(
+
+
+                  controller:
+                  campo,
+
+
+                  decoration:
+                  const InputDecoration(
+
+                    hintText:
+                    "Nova tarefa"
+
+                  ),
+
+
+
+                ),
+
+
+              ),
+
+
+
+
+
+              IconButton(
+
+                icon:
+                const Icon(
+                  Icons.add
+                ),
+
+
+                onPressed:
+                adicionar,
+
+
+              )
+
+
+            ],
+
+
+          ),
+
+
+
+
+
+
           Expanded(
-            child: _carregando
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : _tarefas.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Nenhuma tarefa encontrada.',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 16,
-                          ),
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: _tarefas.length,
-                        itemBuilder: (ctx, i) {
-                          final t = _tarefas[i];
 
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            child: ListTile(
-                              leading: Checkbox(
-                                value: t.concluida,
-                                onChanged: (_) =>
-                                    _alternarStatus(t),
-                              ),
-                              title: Text(
-                                t.titulo,
-                                style: TextStyle(
-                                  decoration: t.concluida
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none,
-                                  color: t.concluida
-                                      ? Colors.grey
-                                      : Colors.black,
-                                ),
-                              ),
-                              trailing: IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () =>
-                                    _removerTarefa(t.id!),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-          ),
 
-          // EXERCÍCIO 01 - Contador de tarefas
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            color: Colors.teal.shade50,
-            child: Text(
-              'Total de tarefas registradas: ${_tarefas.length}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            child:
+            ListView.builder(
+
+
+              itemCount:
+              tarefas.length,
+
+
+
+              itemBuilder:(context,index){
+
+
+
+                final tarefa =
+                tarefas[index];
+
+
+
+                return ListTile(
+
+
+
+                  title:
+                  Text(
+
+                    tarefa.titulo,
+
+
+
+                    style:
+                    TextStyle(
+
+                      decoration:
+                      tarefa.concluida
+
+                      ? TextDecoration.lineThrough
+
+                      : null,
+
+
+                    ),
+
+
+                  ),
+
+
+
+
+                  leading:
+                  Checkbox(
+
+
+                    value:
+                    tarefa.concluida,
+
+
+
+                    onChanged:(v){
+
+                      mudarStatus(tarefa);
+
+                    },
+
+
+                  ),
+
+
+
+
+                  trailing:
+                  IconButton(
+
+
+                    icon:
+                    const Icon(
+                      Icons.delete,
+                      color:Colors.red,
+                    ),
+
+
+
+                    onPressed:(){
+
+
+                      DatabaseHelper.instance.remover(
+                        tarefa.id!
+                      );
+
+
+                      carregar();
+
+
+
+                    },
+
+
+                  ),
+
+
+
+                );
+
+
+              },
+
+
             ),
-          ),
+
+
+          )
+
+
         ],
+
+
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: _exibirDialogCadastro,
-        backgroundColor: Colors.teal,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
+
     );
+
+
   }
+
+
 }

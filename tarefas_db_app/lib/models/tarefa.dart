@@ -1,7 +1,9 @@
 class Tarefa {
+
   final int? id;
   final String titulo;
   final bool concluida;
+
 
   Tarefa({
     this.id,
@@ -9,31 +11,34 @@ class Tarefa {
     this.concluida = false,
   });
 
-  Tarefa copyWith({
-    int? id,
-    String? titulo,
-    bool? concluida,
-  }) {
-    return Tarefa(
-      id: id ?? this.id,
-      titulo: titulo ?? this.titulo,
-      concluida: concluida ?? this.concluida,
-    );
-  }
 
-  Map<String, dynamic> toMap() {
+
+  Map<String,dynamic> toMap(){
+
     return {
+
       'id': id,
       'titulo': titulo,
       'concluida': concluida ? 1 : 0,
+
     };
+
   }
 
-  factory Tarefa.fromMap(Map<String, dynamic> map) {
+
+
+  factory Tarefa.fromMap(Map<String,dynamic> map){
+
     return Tarefa(
-      id: map['id'] as int?,
-      titulo: map['titulo'] as String,
-      concluida: (map['concluida'] as int? ?? 0) == 1,
+
+      id: map['id'],
+
+      titulo: map['titulo'],
+
+      concluida: map['concluida'] == 1,
+
     );
+
   }
+
 }
