@@ -21,7 +21,14 @@ class CartaoEstudante extends StatelessWidget {
     return Container(
       width: 320,
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        gradient: const LinearGradient(
+          colors: [
+            Colors.white,
+            Color(0xFFE8F5E9),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.green,
@@ -35,11 +42,14 @@ class CartaoEstudante extends StatelessWidget {
           ),
         ],
       ),
+
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+
           children: [
+
             CircleAvatar(
               radius: 40,
               foregroundImage: NetworkImage(imagem),
@@ -76,7 +86,9 @@ class CartaoEstudante extends StatelessWidget {
                   Icons.badge,
                   color: Colors.green,
                 ),
+
                 const SizedBox(width: 10),
+
                 Text(
                   'RA: $ra',
                   style: const TextStyle(
@@ -94,7 +106,9 @@ class CartaoEstudante extends StatelessWidget {
                   Icons.email,
                   color: Colors.green,
                 ),
+
                 const SizedBox(width: 10),
+
                 Text(
                   email,
                   style: const TextStyle(
@@ -104,21 +118,83 @@ class CartaoEstudante extends StatelessWidget {
               ],
             ),
 
+            const SizedBox(height: 16),
+
+            const Text(
+              'Sobre Mim',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+
+            const SizedBox(height: 6),
+
+            const Text(
+              'Estudante de Desenvolvimento de Sistemas, '
+              'interessado em programação mobile e criação de aplicativos.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const Text(
+              'Skills',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+
             const SizedBox(height: 8),
 
             const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+
+                Chip(
+                  label: Text('Flutter'),
+                ),
+
+                SizedBox(width: 5),
+
+                Chip(
+                  label: Text('Dart'),
+                ),
+
+                SizedBox(width: 5),
+
+                Chip(
+                  label: Text('Firebase'),
+                ),
+
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            const Row(
+              children: [
+
                 Icon(
                   Icons.check_circle,
                   color: Colors.green,
                 ),
+
                 SizedBox(width: 10),
+
                 Text(
                   'Status: Matriculado / Ativo',
                   style: TextStyle(
                     fontSize: 14,
                   ),
                 ),
+
               ],
             ),
 

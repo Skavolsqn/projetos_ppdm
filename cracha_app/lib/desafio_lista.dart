@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'cartao_estudante.dart';
 
 class DesafioLista extends StatelessWidget {
-  const DesafioLista({super.key});
+
+  const DesafioLista({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+
       appBar: AppBar(
         title: const Text(
           'PPDM - Identificação Estudantil',
@@ -15,10 +20,15 @@ class DesafioLista extends StatelessWidget {
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
       ),
+
       body: SingleChildScrollView(
+
         child: Center(
+
           child: Column(
+
             children: [
+
               const SizedBox(height: 16),
 
               CartaoEstudante(
@@ -29,7 +39,9 @@ class DesafioLista extends StatelessWidget {
                 imagem: 'https://i.pravatar.cc/150?img=47',
               ),
 
+
               const SizedBox(height: 16),
+
 
               CartaoEstudante(
                 nome: 'Carlos Oliveira',
@@ -39,7 +51,9 @@ class DesafioLista extends StatelessWidget {
                 imagem: 'https://i.pravatar.cc/150?img=12',
               ),
 
+
               const SizedBox(height: 16),
+
 
               CartaoEstudante(
                 nome: 'Mariana Souza',
@@ -49,7 +63,9 @@ class DesafioLista extends StatelessWidget {
                 imagem: 'https://i.pravatar.cc/150?img=32',
               ),
 
+
               const SizedBox(height: 16),
+
             ],
           ),
         ),

@@ -1,4 +1,3 @@
-```dart
 import 'package:flutter/material.dart';
 
 class BlocoEstatistica extends StatelessWidget {
@@ -55,4 +54,3 @@ class BlocoEstatistica extends StatelessWidget {
     );
   }
 }
-```

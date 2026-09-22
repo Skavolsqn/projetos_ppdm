@@ -1,4 +1,3 @@
-```dart
 import 'package:flutter/material.dart';
 import 'widgets/bloco_estatistica.dart';
 
@@ -280,4 +279,3 @@ class TelaDashboard extends StatelessWidget {
     );
   }
 }
-```
